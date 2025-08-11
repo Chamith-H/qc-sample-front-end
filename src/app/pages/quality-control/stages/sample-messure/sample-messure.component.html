@@ -1,0 +1,220 @@
+<div class="row">
+  <div class="col-6">
+    <app-searchable-dropdown
+      [control]="form1.controls.method"
+      dropdownId="method"
+      label="Default quality checking method"
+      emptyError="Checking method be empty"
+      [options]="testingMethods"
+      [isSubmit]="isSubmit_form1"
+      [mandatory]="true"
+      (onChange)="changeTestingMethod()"
+    >
+    </app-searchable-dropdown>
+  </div>
+
+  <div class="col-6">
+    <app-searchable-dropdown
+      [control]="form1.controls.samplingMethod"
+      dropdownId="samplingmethod"
+      label="Default sampling method"
+      emptyError="Samling method be empty"
+      [options]="samplingMethods"
+      [isSubmit]="isSubmit_form1"
+      [mandatory]="true"
+      (onChange)="changeSamplingMethod()"
+      [isDisabled]="form1.value.method === 'Single-Test'"
+    >
+    </app-searchable-dropdown>
+  </div>
+
+  <div *ngIf="form1.value.method !== 'Single-Test'">
+    <form [formGroup]="form2" (ngSubmit)="submit_form2()">
+      <div>
+        <table
+          class="table table-sm table-bordered mb-0 align-middle custom-table"
+        >
+          <thead>
+            <tr>
+              <th class="item-table-th uom-selector-head">UOM</th>
+              <th class="item-table-th">Logic</th>
+              <th class="item-table-th">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody *ngIf="itemList.controls.length !== 0">
+            <tr *ngFor="let item of itemList.controls; let j = index">
+              <td>
+                <div
+                  *ngIf="item.value.min === '0'"
+                  class="d-flex align-items-center justify-content-between"
+                >
+                  <div
+                    [ngClass]="
+                      form1.value.samplingMethod === 'Range'
+                        ? 'uom-selector'
+                        : 'full-selector'
+                    "
+                  >
+                    <app-searchable-dropdown
+                      [control]="item.controls.uom"
+                      [dropdownId]="'uom' + j"
+                      emptyError="UOM be empty"
+                      [options]="uoms"
+                      [isSubmit]="isSubmit_form2"
+                      [mandatory]="true"
+                    >
+                    </app-searchable-dropdown>
+                  </div>
+
+                  <button
+                    *ngIf="form1.value.samplingMethod === 'Range'"
+                    (click)="createUomRow(item.value.uom)"
+                    [disabled]="disableFinder(item.value.uom)"
+                    class="btn btn-warning text-white"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </td>
+              <td>
+                <div
+                  *ngIf="form1.value.samplingMethod === 'Range'"
+                  class="d-flex align-items-center"
+                >
+                  For &nbsp; &nbsp;
+                  <app-input-field
+                    type="number"
+                    [control]="item.controls.min"
+                    [inputId]="'min' + j"
+                    placeHolder="start quantity"
+                    emptyError="From quantity cannot be empty"
+                    [isSubmit]="isSubmit_form2"
+                    [mandatory]="true"
+                    [readonly]="true"
+                  >
+                  </app-input-field>
+                  &nbsp; &nbsp; to &nbsp; &nbsp;
+
+                  <app-input-field
+                    type="number"
+                    [control]="item.controls.max"
+                    [inputId]="'max' + j"
+                    placeHolder="end quantity"
+                    emptyError="To quantity cannot be empty"
+                    [isSubmit]="isSubmit_form2"
+                    [mandatory]="true"
+                  >
+                  </app-input-field>
+
+                  &nbsp; &nbsp; qty &nbsp; &nbsp;
+                  <i class="fas fa-arrow-right"></i>
+                  &nbsp; &nbsp; &nbsp;
+                  <app-input-field
+                    type="number"
+                    [control]="item.controls.count"
+                    [inputId]="'sample' + j"
+                    placeHolder="Sample count"
+                    emptyError="Sample cannot be empty"
+                    [isSubmit]="isSubmit_form2"
+                    [mandatory]="true"
+                  >
+                  </app-input-field>
+                  &nbsp; &nbsp; samples
+                </div>
+
+                <div
+                  *ngIf="form1.value.samplingMethod === 'Proportional'"
+                  class="d-flex align-items-center"
+                >
+                  For every&nbsp; &nbsp;
+                  <app-input-field
+                    type="number"
+                    [control]="item.controls.max"
+                    [inputId]="'max' + j"
+                    placeHolder="propotional quantity"
+                    emptyError="To quantity cannot be empty"
+                    [isSubmit]="isSubmit_form2"
+                    [mandatory]="true"
+                  >
+                  </app-input-field>
+
+                  &nbsp; &nbsp; qty &nbsp; &nbsp;
+                  <i class="fas fa-arrow-right"></i>
+                  &nbsp; &nbsp; &nbsp;
+                  <app-input-field
+                    type="number"
+                    [control]="item.controls.count"
+                    [inputId]="'sample' + j"
+                    placeHolder="Sample count"
+                    emptyError="Sample cannot be empty"
+                    [isSubmit]="isSubmit_form2"
+                    [mandatory]="true"
+                  >
+                  </app-input-field>
+                  &nbsp; &nbsp; samples
+                </div>
+
+                <div
+                  *ngIf="form1.value.samplingMethod === 'Fixed'"
+                  class="d-flex align-items-center"
+                >
+                  For all qty&nbsp; &nbsp;
+                  <i class="fas fa-arrow-right"></i>
+                  &nbsp; &nbsp; &nbsp;
+                  <app-input-field
+                    type="number"
+                    [control]="item.controls.count"
+                    [inputId]="'sample' + j"
+                    placeHolder="Sample count"
+                    emptyError="Sample cannot be empty"
+                    [isSubmit]="isSubmit_form2"
+                    [mandatory]="true"
+                  >
+                  </app-input-field>
+                  &nbsp; &nbsp; samples
+                </div>
+              </td>
+
+              <td>
+                <button class="btn btn-sm button-delete" (click)="deleteRow(j)">
+                  <i class="fas fa-trash-alt text-danger"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="itemList.controls.length === 0">
+            <tr>
+              <td [colSpan]="3">
+                <div class="py-5 my-5">
+                  <p class="text-center">Please add a new row to continue</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+
+  <div class="d-flex justify-content-between mt-3">
+    <button
+      *ngIf="
+        form1.value.method !== 'Single-Test' &&
+        !(disableRowing && itemList.controls.length > 0)
+      "
+      class="btn btn-success"
+      type="button"
+      (click)="createRow()"
+    >
+      + Create Row
+    </button>
+
+    <p *ngIf="form1.value.method === 'Single-Test' || disableRowing">&nbsp;</p>
+
+    <button class="btn btn-primary" type="button" (click)="getValues()">
+      {{ buttonName }}
+    </button>
+  </div>
+</div>
