@@ -233,6 +233,13 @@ export class RelationSetterComponent {
             this.toastr.error("Please enter all propotionl quantities!");
             return;
           }
+
+          if (this.samplingData.samplingMethod === "Range" && isMaxEmpty) {
+            this.toastr.error(
+              "Please enter the upper boundary quantity for all fields!"
+            );
+            return;
+          }
         }
       }
 
@@ -317,7 +324,7 @@ export class RelationSetterComponent {
         );
 
         if (error1) {
-          this.toastr.error("Please fill all red color fields!");
+          this.toastr.error("Please fill all grey color fields!");
           return;
         }
 
@@ -327,7 +334,7 @@ export class RelationSetterComponent {
         );
 
         if (error2) {
-          this.toastr.error("Please fill all red color fields!");
+          this.toastr.error("Please fill all grey color fields!");
           return;
         } else {
           this.stepper.next();

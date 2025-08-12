@@ -233,9 +233,8 @@
             <div class="col-3">
               <p class="mb-0">Checking Method</p>
               <h6 class="mb-0">
-                <span *ngIf="form2.value.method === 'Multi-Test'"
-                  >{{ form2.value.sampleCount }} |&nbsp;</span
-                >{{ form2.value.method }}
+                {{ samplingData.method }} |
+                {{ samplingData.samplingMethod }} Sampling
               </h6>
             </div>
           </div>
@@ -457,9 +456,8 @@
             <div class="col-3">
               <p class="mb-0">Checking Method</p>
               <h6 class="mb-0">
-                <span *ngIf="form2.value.method === 'Multi-Test'"
-                  >{{ form2.value.sampleCount }} |&nbsp;</span
-                >{{ form2.value.method }}
+                {{ samplingData.method }} |
+                {{ samplingData.samplingMethod }} Sampling
               </h6>
             </div>
           </div>

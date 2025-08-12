@@ -56,6 +56,7 @@
               <div *ngIf="!loadingOpend" class="startingBox">
                 <div class="mt-3">
                   <app-sample-messure
+                    [uom]="data.Uom"
                     buttonName="Start Inspection"
                     [body]="samplingMethodology"
                     [disableRowing]="true"

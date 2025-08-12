@@ -12,6 +12,8 @@ export class SampleMessureComponent {
   @Output() getData = new EventEmitter<any>();
   @Input() disableRowing: boolean = false;
 
+  @Input() uom: string = null;
+
   testingMethod: string = "Single-Test";
   samplingMethod: string = "Fixed";
 
@@ -82,9 +84,9 @@ export class SampleMessureComponent {
   ): FormGroup {
     return this.fb.group({
       uom: [uom, [Validators.required]],
-      min: [min],
-      max: [max],
-      count: [count],
+      min: [min, [Validators.required]],
+      max: [max, [Validators.required]],
+      count: [count, [Validators.required]],
     });
   }
 
@@ -104,7 +106,7 @@ export class SampleMessureComponent {
   }
 
   createRow() {
-    this.itemList.push(this.createItemRow(null, "0", "", ""));
+    this.itemList.push(this.createItemRow(this.uom, "0", "", ""));
   }
 
   createUomRow(uom: string) {
@@ -177,6 +179,8 @@ export class SampleMessureComponent {
   }
 
   getValues() {
+    this.isSubmit_form2 = true;
+
     const body = {
       method: this.form1.value.method,
       samplingMethod: this.form1.value.samplingMethod,

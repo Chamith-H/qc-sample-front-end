@@ -63,6 +63,7 @@
                       [options]="uoms"
                       [isSubmit]="isSubmit_form2"
                       [mandatory]="true"
+                      [isDisabled]="uom"
                     >
                     </app-searchable-dropdown>
                   </div>
@@ -133,7 +134,7 @@
                     [control]="item.controls.max"
                     [inputId]="'max' + j"
                     placeHolder="propotional quantity"
-                    emptyError="To quantity cannot be empty"
+                    emptyError="Propotional quantity cannot be empty"
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                   >
@@ -147,7 +148,7 @@
                     [control]="item.controls.count"
                     [inputId]="'sample' + j"
                     placeHolder="Sample count"
-                    emptyError="Sample cannot be empty"
+                    emptyError="Sample count cannot be empty"
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                   >
@@ -167,7 +168,7 @@
                     [control]="item.controls.count"
                     [inputId]="'sample' + j"
                     placeHolder="Sample count"
-                    emptyError="Sample cannot be empty"
+                    emptyError="Sample count cannot be empty"
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                   >

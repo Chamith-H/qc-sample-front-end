@@ -184,31 +184,47 @@ export class InspectionConfComponent {
   };
 
   beginInspection(s_data: any) {
-    const isUomEmpty = s_data.samplingLogics.some(
-      (s_data1: any) => s_data1.uom === null || s_data1.uom === ""
-    );
+    if (s_data.method !== "Single-Test") {
+      if (s_data.samplingLogics.length === 0) {
+        this.toastr.error("Please add at least one sampling logic!");
+        return;
+      } else {
+        const isUomEmpty = s_data.samplingLogics.some(
+          (s_data1: any) => s_data1.uom === null || s_data1.uom === ""
+        );
 
-    const isCountEmpty = s_data.samplingLogics.some(
-      (s_data2: any) => s_data2.count === null || s_data2.count === ""
-    );
+        const isCountEmpty = s_data.samplingLogics.some(
+          (s_data2: any) => s_data2.count === null || s_data2.count === ""
+        );
 
-    const isMaxEmpty = s_data.samplingLogics.some(
-      (s_data3: any) => s_data3.max === null || s_data3.max === ""
-    );
+        const isMaxEmpty = s_data.samplingLogics.some(
+          (s_data3: any) => s_data3.max === null || s_data3.max === ""
+        );
 
-    if (isUomEmpty) {
-      this.toastr.error("UOM cannot be empty when sample mapping!");
-      return;
-    }
+        if (isUomEmpty) {
+          this.toastr.error("UOM cannot be empty when sample mapping!");
+          return;
+        }
 
-    if (isCountEmpty) {
-      this.toastr.error("Sampling count cannot be empty when sample mapping!");
-      return;
-    }
+        if (isCountEmpty) {
+          this.toastr.error(
+            "Sampling count cannot be empty when sample mapping!"
+          );
+          return;
+        }
 
-    if (s_data.samplingMethod === "Proportional" && isMaxEmpty) {
-      this.toastr.error("Please enter all propotionl quantities!");
-      return;
+        if (s_data.samplingMethod === "Proportional" && isMaxEmpty) {
+          this.toastr.error("Please enter all propotionl quantities!");
+          return;
+        }
+
+        if (s_data.samplingMethod === "Range" && isMaxEmpty) {
+          this.toastr.error(
+            "Please enter the upper boundary quantity for all fields!"
+          );
+          return;
+        }
+      }
     }
 
     this.isStarting = true;
