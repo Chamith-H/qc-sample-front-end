@@ -113,6 +113,7 @@ export class SampleGatherComponent {
       itemCode: this.data.ItemCode,
       docNum: this.data.DocNum,
       round: this.data.U_Round,
+      columnNames: this.sampleCols,
       parameterValues: this.form.value,
     };
 

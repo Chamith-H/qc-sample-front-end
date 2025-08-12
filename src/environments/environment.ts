@@ -4,8 +4,9 @@
 
 export const environment = {
   production: false,
-  defaultauth: "fackbackend",
-  apiUrl: "https://qc-sample-backend-production.up.railway.app",
+  // defaultauth: "fackbackend",
+  // apiUrl: "https://qc-sample-backend-production.up.railway.app",
+  apiUrl: "http://127.0.0.1:9503",
   bucketUrl: "https://upload.gofile.io",
 };
 

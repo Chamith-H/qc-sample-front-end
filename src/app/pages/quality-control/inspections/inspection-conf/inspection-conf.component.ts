@@ -35,6 +35,7 @@ export class InspectionConfComponent {
   ];
 
   sampleCols: string[] = [];
+  columnNames: string[] = [];
   parameterData: any[] = [];
 
   form3: FormGroup;
@@ -183,6 +184,33 @@ export class InspectionConfComponent {
   };
 
   beginInspection(s_data: any) {
+    const isUomEmpty = s_data.samplingLogics.some(
+      (s_data1: any) => s_data1.uom === null || s_data1.uom === ""
+    );
+
+    const isCountEmpty = s_data.samplingLogics.some(
+      (s_data2: any) => s_data2.count === null || s_data2.count === ""
+    );
+
+    const isMaxEmpty = s_data.samplingLogics.some(
+      (s_data3: any) => s_data3.max === null || s_data3.max === ""
+    );
+
+    if (isUomEmpty) {
+      this.toastr.error("UOM cannot be empty when sample mapping!");
+      return;
+    }
+
+    if (isCountEmpty) {
+      this.toastr.error("Sampling count cannot be empty when sample mapping!");
+      return;
+    }
+
+    if (s_data.samplingMethod === "Proportional" && isMaxEmpty) {
+      this.toastr.error("Please enter all propotionl quantities!");
+      return;
+    }
+
     this.isStarting = true;
 
     const body = {
@@ -455,6 +483,9 @@ export class InspectionConfComponent {
 
           if (data.length > 0) {
             this.sampleCols = data[0].samplingData.map((s) => s.sampleName);
+            this.columnNames = data[0].samplingData.map(
+              (s) => s.sampleDefinition
+            );
           }
 
           data.forEach((m_data: any) => {
