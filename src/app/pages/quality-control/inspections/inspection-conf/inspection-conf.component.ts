@@ -88,11 +88,7 @@ export class InspectionConfComponent {
 
   viewDocument(doc: any) {
     const directUrl = doc.url;
-
-    const a = document.createElement("a");
-    a.href = directUrl;
-    a.download = doc.name;
-    a.click();
+    window.open(directUrl, "_blank"); // Opens in new tab
   }
 
   deleteDocument(doc: any) {

@@ -25,12 +25,11 @@ export class DocUploadComponent {
   @ViewChild("fileInput", { static: true }) fileInput: ElementRef;
   @Output() imageFile: EventEmitter<any> = new EventEmitter<any>();
 
-  // Currently showing image
   isImage: boolean = false;
   selectedImage: string | ArrayBuffer | null = null;
+  finalFile: File | null = null;
 
-  finalFile: any = null;
-
+  // Azure SAS Token & URL
   sasToken =
     "sp=racwdli&st=2025-08-03T21:07:08Z&se=2025-12-16T05:22:08Z&sv=2024-11-04&sr=c&sig=kOJjd7d%2FHg0LtRp9IEVkMkXAnlXrLCqPUrG4wrvH%2F1I%3D";
   sasUrl = "https://synerisblobstorage.blob.core.windows.net/servicedocs/";
@@ -40,117 +39,99 @@ export class DocUploadComponent {
     private successMessage: SuccessMessage
   ) {}
 
-  //!--> Image handlers...................................................................|
+  // Drag & drop file
   onDrop(event: DragEvent) {
     event.preventDefault();
     const file = event.dataTransfer?.files[0];
-
-    if (file) {
-      this.finalFile = file;
-
-      const isImage = file.type.startsWith("image/");
-
-      if (isImage) {
-        this.isImage = true;
-        this.handleFile(file);
-      } else {
-        this.isImage = false;
-      }
-    }
+    if (file) this.handleSelectedFile(file);
   }
 
+  // Open file selector
   openFileInput() {
     this.fileInput.nativeElement.click();
   }
 
+  // File selected from input
   onFileSelect(event: any) {
     const file = event.target.files[0];
-
-    if (file) {
-      console.log(file);
-      this.finalFile = file;
-      const isImage = file.type.startsWith("image/");
-
-      if (isImage) {
-        this.isImage = true;
-        this.handleFile(file);
-      } else {
-        this.isImage = false;
-      }
-    }
+    if (file) this.handleSelectedFile(file);
   }
 
+  // Prevent default drag behavior
   onDragOver(event: DragEvent) {
     event.preventDefault();
   }
 
-  //!--> Image processors..................................................................|
-  // Get file
-  handleFile(file: File | null) {
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        this.selectedImage = event.target?.result;
-      };
-      reader.readAsDataURL(file);
+  // Handle file selection
+  private handleSelectedFile(file: File) {
+    this.finalFile = file;
+
+    if (file.type.startsWith("image/")) {
+      this.isImage = true;
+      this.previewImage(file);
+    } else {
+      this.isImage = false;
+      this.selectedImage = null;
     }
+  }
+
+  // Preview image
+  private previewImage(file: File) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      this.selectedImage = event.target?.result;
+    };
+    reader.readAsDataURL(file);
   }
 
   isUploading: boolean = false;
 
-  private async bufferToBase64(buffer: Blob | File): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64data = (reader.result as string).split(",")[1]; // remove `data:...;base64,`
-        resolve(base64data);
-      };
-      reader.onerror = (err) => reject(err);
-      reader.readAsDataURL(buffer); // auto encodes to base64
-    });
-  }
+  // Upload to Azure
+  async uploadDocument() {
+    if (!this.finalFile) {
+      console.error("No file selected.");
+      return;
+    }
 
-  uploadDocument() {
     this.isUploading = true;
+    const blobUrl = `${this.sasUrl}${this.finalFile.name}?${this.sasToken}`;
 
-    this.bufferToBase64(this.finalFile).then(async (base64) => {
-      const bufferUrl = `${this.sasUrl}${this.finalFile.name}?${this.sasToken}`;
+    try {
+      // Upload raw binary file to Azure Blob Storage
+      const response = await axios.put(blobUrl, this.finalFile, {
+        headers: {
+          "x-ms-blob-type": "BlockBlob",
+          "Content-Type": this.finalFile.type || "application/octet-stream",
+        },
+      });
 
-      try {
-        const response = await axios.put(bufferUrl, base64, {
-          headers: {
-            "x-ms-blob-type": "BlockBlob",
-            "Content-Type": "image/png",
+      if (response.status === 201) {
+        console.log("Upload success!");
+
+        const body = {
+          refId: this.id,
+          name: this.finalFile.name,
+          fullPath: "",
+          path: "",
+          docId: "",
+          url: response.config.url,
+        };
+
+        this.inspectionService.uploadDocuments(body).subscribe({
+          next: (res: sMsg) => {
+            this.isUploading = false;
+            this.successMessage.show(res.message);
+            this.closePopupAndReload.emit();
+          },
+          error: (err) => {
+            console.error(err);
+            this.isUploading = false;
           },
         });
-
-        if (response) {
-          console.log("Upload success!");
-
-          const body = {
-            refId: this.id,
-            name: this.finalFile.name,
-            fullPath: "",
-            path: "",
-            docId: "",
-            url: response.config.url,
-          };
-
-          this.inspectionService.uploadDocuments(body).subscribe({
-            next: (res: sMsg) => {
-              this.isUploading = false;
-              this.successMessage.show(res.message);
-              this.closePopupAndReload.emit();
-            },
-            error: (err) => {
-              console.log(err);
-              this.isUploading = false;
-            },
-          });
-        }
-      } catch (error: any) {
-        console.error("Upload failed:", error);
       }
-    });
+    } catch (error) {
+      console.error("Upload failed:", error);
+      this.isUploading = false;
+    }
   }
 }
