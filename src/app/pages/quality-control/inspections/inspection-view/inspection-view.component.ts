@@ -26,6 +26,7 @@ export class InspectionViewComponent {
   modalRef?: BsModalRef;
 
   sampleCols: string[] = [];
+  columnNames: string[] = [];
   parameterData: any[] = [];
 
   sampleMethods = [
@@ -253,10 +254,15 @@ export class InspectionViewComponent {
 
         this.inspectionService.checkingItems(body).subscribe({
           next: (data: any) => {
+            console.log(data);
             this.loadingItems = false;
 
             if (data.length > 0) {
               this.sampleCols = data[0].samplingData.map((s) => s.sampleName);
+
+              this.columnNames = data[0].samplingData.map(
+                (s) => s.sampleDefinition
+              );
             }
 
             data.forEach((m_data: any) => {
@@ -401,6 +407,10 @@ export class InspectionViewComponent {
 
           if (data.length > 0) {
             this.sampleCols = data[0].samplingData.map((s) => s.sampleName);
+
+            this.columnNames = data[0].samplingData.map(
+              (s) => s.sampleDefinition
+            );
           }
 
           data.forEach((m_data: any) => {
