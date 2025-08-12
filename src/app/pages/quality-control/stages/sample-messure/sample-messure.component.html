@@ -37,7 +37,24 @@
           <thead>
             <tr>
               <th class="item-table-th uom-selector-head">UOM</th>
-              <th class="item-table-th">Logic</th>
+              <th class="item-table-th">
+                <span
+                  *ngIf="
+                    form1.value.samplingMethod === '' ||
+                    !form1.value.samplingMethod
+                  "
+                  >Sampling Logic</span
+                >
+                <span *ngIf="form1.value.samplingMethod === 'Fixed'"
+                  >Fixed Samples</span
+                >
+                <span *ngIf="form1.value.samplingMethod === 'Proportional'"
+                  >Sample Propotions</span
+                >
+                <span *ngIf="form1.value.samplingMethod === 'Range'"
+                  >Sample Ranges</span
+                >
+              </th>
               <th class="item-table-th">Actions</th>
             </tr>
           </thead>
