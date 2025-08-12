@@ -316,8 +316,7 @@ export class EditStageComponent {
     this.isSubmit_form3 = true;
 
     if (this.form3.invalid) {
-      this.toastr.error("Please select a parameter!");
-      return;
+      console.log("invalid");
     } else {
       if (this.itemList.controls.length === 0) {
         this.toastr.error("Please fill the form correctly!");

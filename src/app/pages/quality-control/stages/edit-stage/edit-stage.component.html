@@ -19,39 +19,6 @@
 <div class="p-3">
   <div>
     <form [formGroup]="form3" (ngSubmit)="submit_form3()">
-      <div class="row">
-        <div class="col-6">
-          <app-searchable-dropdown
-            [control]="form3.controls.method"
-            dropdownId="method"
-            label="Default quality checking method"
-            emptyError="Checking method be empty"
-            [options]="sampleMethods"
-            [isSubmit]="isSubmit_form3"
-            [mandatory]="true"
-            (onChange)="changeMethod()"
-            [isDisabled]="loadingParameters"
-            [isLoading]="loadingParameters"
-          >
-          </app-searchable-dropdown>
-        </div>
-
-        <div class="col-6">
-          <app-input-field
-            [control]="form3.controls.sampleCount"
-            inputId="sampleCount"
-            label="Default sample count"
-            placeHolder="sample count"
-            emptyError="Sample count cannot be empty!"
-            [isSubmit]="isSubmit_form3"
-            [mandatory]="true"
-            type="number"
-            [readonly]="form3.value.method === 'Single-Test'"
-          >
-          </app-input-field>
-        </div>
-      </div>
-
       <label class="form-label-light"
         ><span class="text-danger">*</span>
         Quality Control Parameters
