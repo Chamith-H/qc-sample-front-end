@@ -149,6 +149,42 @@ export class SampleMessureComponent {
     this.itemList.clear();
   }
 
+  chnageUom(uomId: string, index: number) {
+    const formItems = this.itemList.value;
+
+    const count = formItems.filter(
+      (f_item: any) => f_item.uom === uomId
+    ).length;
+
+    if (count > 1) {
+      const control = this.itemList.at(index);
+      if (control) {
+        control.get("uom").setValue(null);
+        this.toastr.warning("This UOM is already selected in another row!");
+      }
+    }
+  }
+
+  disableToField(index: number) {
+    const control = this.itemList.at(index);
+
+    if (!control.value.uom) {
+      return true;
+    } else {
+      const formItems = this.itemList.value;
+
+      const count = formItems.filter(
+        (f_item: any) => f_item.uom === control.value.uom
+      ).length;
+
+      if (count - 1 === index) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }
+
   getOriginatedUoms() {
     const formItems = this.itemList.value;
 
@@ -174,6 +210,7 @@ export class SampleMessureComponent {
 
     this.removeAll();
   }
+
   changeSamplingMethod() {
     this.removeAll();
   }

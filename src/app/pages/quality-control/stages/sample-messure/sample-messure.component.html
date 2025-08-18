@@ -81,6 +81,7 @@
                       [isSubmit]="isSubmit_form2"
                       [mandatory]="true"
                       [isDisabled]="uom"
+                      (onChange)="chnageUom($event, j)"
                     >
                     </app-searchable-dropdown>
                   </div>
@@ -122,6 +123,7 @@
                     emptyError="To quantity cannot be empty"
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
+                    [readonly]="disableToField(j)"
                   >
                   </app-input-field>
 

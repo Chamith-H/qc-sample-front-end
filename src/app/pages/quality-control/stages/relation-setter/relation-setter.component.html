@@ -11,7 +11,10 @@
     class="wizard"
   >
     <!-- ! Step 1 ................................................................. -->
-    <cdk-step [optional]="false" [completed]="form2.value.itemCode !== null">
+    <cdk-step
+      [optional]="false"
+      [completed]="form2.value.itemCode !== null && samplingData"
+    >
       <ng-template cdkStepLabel>
         <span class="number mb-0">1</span>
         <span>Item Selection</span>
@@ -85,7 +88,7 @@
                   ></app-radio-circle>
                 </td>
 
-                <td>{{ i + 1 }}</td>
+                <td>{{ (currentPage - 1) * 10 + i + 1 }}</td>
                 <td>{{ item.ItemCode }}</td>
                 <td>{{ item.ItemName }}</td>
               </tr>

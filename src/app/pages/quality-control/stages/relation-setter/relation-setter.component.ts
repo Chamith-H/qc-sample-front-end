@@ -188,7 +188,11 @@ export class RelationSetterComponent {
     return item.ItemName;
   }
 
-  samplingData: any = null;
+  samplingData = {
+    method: "Single-Test",
+    samplingMethod: "Fixed",
+    samplingLogics: [],
+  };
 
   submit_form2() {
     this.isSubmit_form2 = true;
@@ -356,7 +360,7 @@ export class RelationSetterComponent {
   getItems(page: number, filter: any) {
     this.isItemDataLoading = true;
 
-    this.eligibleService.getAll(page, filter).subscribe({
+    this.eligibleService.getNotConfiguredItems(page, filter).subscribe({
       next: (res) => {
         this.currentPage = res.currentPage;
         this.pageCount = res.pageCount;

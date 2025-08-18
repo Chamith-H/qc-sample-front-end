@@ -20,6 +20,14 @@ export class EligibleService {
     });
   }
 
+  getNotConfiguredItems(page: number, filter: any): Observable<any> {
+    let params = new HttpParams();
+    params = params.append("page", page.toString());
+    return this.http.post(this.baseUrl + "/not-configured-qc-items", filter, {
+      params: params,
+    });
+  }
+
   getAllWarehouses(page: number, filter: any): Observable<any> {
     let params = new HttpParams();
     params = params.append("page", page.toString());
