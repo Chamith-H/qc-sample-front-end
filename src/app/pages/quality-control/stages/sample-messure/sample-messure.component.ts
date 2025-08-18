@@ -10,6 +10,7 @@ import { ToastrService } from "ngx-toastr";
 export class SampleMessureComponent {
   @Input() buttonName: string = "";
   @Output() getData = new EventEmitter<any>();
+  @Output() syncData = new EventEmitter<any>();
   @Input() disableRowing: boolean = false;
 
   @Input() uom: string = null;
@@ -63,12 +64,12 @@ export class SampleMessureComponent {
   ];
 
   form1: FormGroup;
-  isSubmit_form1: boolean = false;
+  @Input() isSubmit_form1: boolean = false;
   submittingForm_form1: boolean = false;
   complete_form1: boolean = false;
 
   form2: FormGroup;
-  isSubmit_form2: boolean = false;
+  @Input() isSubmit_form2: boolean = false;
   itemsFormBuilder: FormBuilder = new FormBuilder();
   complete_form3: boolean = false;
 
@@ -149,7 +150,18 @@ export class SampleMessureComponent {
     this.itemList.clear();
   }
 
+  syncValues() {
+    const body = {
+      method: this.form1.value.method,
+      samplingMethod: this.form1.value.samplingMethod,
+      samplingLogics: this.itemList.value,
+    };
+
+    this.syncData.emit(body);
+  }
+
   chnageUom(uomId: string, index: number) {
+    this.syncValues();
     const formItems = this.itemList.value;
 
     const count = formItems.filter(
@@ -204,6 +216,7 @@ export class SampleMessureComponent {
   }
 
   changeTestingMethod() {
+    this.syncValues();
     if (this.form1.value.method === "Single-Test") {
       this.form1.get("samplingMethod").setValue("Fixed");
     }
@@ -212,10 +225,17 @@ export class SampleMessureComponent {
   }
 
   changeSamplingMethod() {
+    this.syncValues();
     this.removeAll();
   }
 
   getValues() {
+    this.isSubmit_form1 = true;
+
+    if (this.form1.invalid) {
+      return;
+    }
+
     this.isSubmit_form2 = true;
 
     const body = {

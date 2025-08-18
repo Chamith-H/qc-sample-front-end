@@ -18,7 +18,8 @@
     [id]="dropdownId"
     [ngClass]="{
       'is-invalid': isSubmit && control.invalid,
-      'border-danger': isSubmit && control.invalid
+      'border-danger': isSubmit && control.invalid,
+      'Red-border-class': isSubmit && control.hasError('required')
     }"
     [searchable]="true"
     (change)="onChanged($event)"

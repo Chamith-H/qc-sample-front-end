@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { CdkStepper } from "@angular/cdk/stepper";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ToastrService } from "ngx-toastr";
 import { sMsg } from "src/app/core/models/shared/success-response.model";
@@ -12,6 +19,9 @@ import { SuccessMessage } from "src/app/core/services/shared/success-message.ser
   styleUrls: ["./edit-stage.component.scss"],
 })
 export class EditStageComponent {
+  @ViewChild(CdkStepper) stepper!: CdkStepper;
+  index: number = 0;
+
   @Input() id: string = "";
   @Input() stage: string = "";
   @Input() itemCode: string = "";
@@ -27,16 +37,7 @@ export class EditStageComponent {
   parameters: any[] = [];
   loadingParameters: boolean = false;
 
-  sampleMethods = [
-    {
-      name: "Single sample test",
-      _id: "Single-Test",
-    },
-    {
-      name: "Multi sample test",
-      _id: "Multi-Test",
-    },
-  ];
+  samplingData: any = null;
 
   booleanDrops = [
     {
@@ -54,8 +55,6 @@ export class EditStageComponent {
     private qcParameterService: QcParameterService
   ) {
     this.form3 = this.fb.group({
-      method: [null, [Validators.required]],
-      sampleCount: [null, [Validators.required]],
       DocumentLines: this.createitemList(),
     });
   }
@@ -82,6 +81,59 @@ export class EditStageComponent {
       stdValue: [stdValue],
       status: [status],
     });
+  }
+
+  syncSDta(data: any) {
+    this.samplingData = data;
+  }
+
+  getSamplingValues(data: any) {
+    this.samplingData = data;
+
+    if (this.samplingData.method !== "Single-Test") {
+      if (this.samplingData.samplingLogics.length === 0) {
+        this.toastr.error("Please add at least one sampling logic!");
+        return;
+      } else {
+        const isUomEmpty = this.samplingData.samplingLogics.some(
+          (s_data1: any) => s_data1.uom === null || s_data1.uom === ""
+        );
+
+        const isCountEmpty = this.samplingData.samplingLogics.some(
+          (s_data2: any) => s_data2.count === null || s_data2.count === ""
+        );
+
+        const isMaxEmpty = this.samplingData.samplingLogics.some(
+          (s_data3: any) => s_data3.max === null || s_data3.max === ""
+        );
+
+        if (isUomEmpty) {
+          this.toastr.error("UOM cannot be empty when sample mapping!");
+          return;
+        }
+
+        if (isCountEmpty) {
+          this.toastr.error(
+            "Sampling count cannot be empty when sample mapping!"
+          );
+          return;
+        }
+
+        if (this.samplingData.samplingMethod === "Proportional" && isMaxEmpty) {
+          this.toastr.error("Please enter all propotionl quantities!");
+          return;
+        }
+
+        if (this.samplingData.samplingMethod === "Range" && isMaxEmpty) {
+          this.toastr.error(
+            "Please enter the upper boundary quantity for all fields!"
+          );
+          return;
+        }
+      }
+    }
+
+    this.stepper.next();
   }
 
   get itemList(): FormArray {
@@ -210,7 +262,10 @@ export class EditStageComponent {
     }
   }
 
+  loadingSamplingMethoding: boolean = true;
+
   getParameters() {
+    this.loadingSamplingMethoding = true;
     this.loadingParameters = true;
 
     this.qcParameterService.dropdownParameter().subscribe({
@@ -226,10 +281,13 @@ export class EditStageComponent {
             next: (res: any) => {
               this.loadingParameters = false;
 
-              this.form3.patchValue({
+              this.samplingData = {
                 method: res.head.method,
-                sampleCount: res.head.sampleCount,
-              });
+                samplingMethod: res.head.samplingMethod,
+                samplingLogics: res.head.samplingLogics,
+              };
+
+              this.loadingSamplingMethoding = false;
 
               const relationMapper = res.relations.map((relation: any) => {
                 this.itemList.push(
@@ -298,21 +356,72 @@ export class EditStageComponent {
     this.itemList.removeAt(index);
   }
 
-  changeMethod() {
-    const method = this.form3.value.method;
-
-    if (method === "Single-Test") {
-      this.form3.get("sampleCount").setValue(1);
-    } else {
-      this.form3.get("sampleCount").setValue(2);
-    }
-  }
-
   isSaving: boolean = false;
 
   onReset() {}
 
+  childSubmit: boolean = false;
+
   submit_form3() {
+    this.childSubmit = true;
+
+    if (!this.samplingData.method || !this.samplingData.samplingMethod) {
+      this.toastr.error("Please fill the form correctly!");
+      this.stepper.previous();
+      return;
+    } else {
+      if (this.samplingData.method !== "Single-Test") {
+        if (this.samplingData.samplingLogics.length === 0) {
+          this.toastr.error("Please add at least one sampling logic!");
+          this.stepper.previous();
+          return;
+        } else {
+          const isUomEmpty = this.samplingData.samplingLogics.some(
+            (s_data1: any) => s_data1.uom === null || s_data1.uom === ""
+          );
+
+          const isCountEmpty = this.samplingData.samplingLogics.some(
+            (s_data2: any) => s_data2.count === null || s_data2.count === ""
+          );
+
+          const isMaxEmpty = this.samplingData.samplingLogics.some(
+            (s_data3: any) => s_data3.max === null || s_data3.max === ""
+          );
+
+          if (isUomEmpty) {
+            this.toastr.error("UOM cannot be empty when sample mapping!");
+            this.stepper.previous();
+            return;
+          }
+
+          if (isCountEmpty) {
+            this.toastr.error(
+              "Sampling count cannot be empty when sample mapping!"
+            );
+            this.stepper.previous();
+            return;
+          }
+
+          if (
+            this.samplingData.samplingMethod === "Proportional" &&
+            isMaxEmpty
+          ) {
+            this.toastr.error("Please enter all propotionl quantities!");
+            this.stepper.previous();
+            return;
+          }
+
+          if (this.samplingData.samplingMethod === "Range" && isMaxEmpty) {
+            this.toastr.error(
+              "Please enter the upper boundary quantity for all fields!"
+            );
+            this.stepper.previous();
+            return;
+          }
+        }
+      }
+    }
+
     this.isSubmit_form3 = true;
 
     if (this.form3.invalid) {

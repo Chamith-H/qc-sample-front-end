@@ -18,7 +18,7 @@
       [control]="form1.controls.samplingMethod"
       dropdownId="samplingmethod"
       label="Default sampling method"
-      emptyError="Samling method be empty"
+      emptyError="Sampling method be empty"
       [options]="samplingMethods"
       [isSubmit]="isSubmit_form1"
       [mandatory]="true"
@@ -76,7 +76,7 @@
                     <app-searchable-dropdown
                       [control]="item.controls.uom"
                       [dropdownId]="'uom' + j"
-                      emptyError="UOM be empty"
+                      emptyError=""
                       [options]="uoms"
                       [isSubmit]="isSubmit_form2"
                       [mandatory]="true"
@@ -107,10 +107,11 @@
                     [control]="item.controls.min"
                     [inputId]="'min' + j"
                     placeHolder="start quantity"
-                    emptyError="From quantity cannot be empty"
+                    emptyError=""
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                     [readonly]="true"
+                    (onChange)="syncValues()"
                   >
                   </app-input-field>
                   &nbsp; &nbsp; to &nbsp; &nbsp;
@@ -120,10 +121,11 @@
                     [control]="item.controls.max"
                     [inputId]="'max' + j"
                     placeHolder="end quantity"
-                    emptyError="To quantity cannot be empty"
+                    emptyError=""
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                     [readonly]="disableToField(j)"
+                    (onChange)="syncValues()"
                   >
                   </app-input-field>
 
@@ -135,9 +137,10 @@
                     [control]="item.controls.count"
                     [inputId]="'sample' + j"
                     placeHolder="Sample count"
-                    emptyError="Sample cannot be empty"
+                    emptyError=""
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
+                    (onChange)="syncValues()"
                   >
                   </app-input-field>
                   &nbsp; &nbsp; samples
@@ -153,9 +156,10 @@
                     [control]="item.controls.max"
                     [inputId]="'max' + j"
                     placeHolder="propotional quantity"
-                    emptyError="Propotional quantity cannot be empty"
+                    emptyError=""
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
+                    (onChange)="syncValues()"
                   >
                   </app-input-field>
 
@@ -167,9 +171,10 @@
                     [control]="item.controls.count"
                     [inputId]="'sample' + j"
                     placeHolder="Sample count"
-                    emptyError="Sample count cannot be empty"
+                    emptyError=""
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
+                    (onChange)="syncValues()"
                   >
                   </app-input-field>
                   &nbsp; &nbsp; samples
@@ -187,9 +192,10 @@
                     [control]="item.controls.count"
                     [inputId]="'sample' + j"
                     placeHolder="Sample count"
-                    emptyError="Sample count cannot be empty"
+                    emptyError=""
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
+                    (onChange)="syncValues()"
                   >
                   </app-input-field>
                   &nbsp; &nbsp; samples
@@ -228,7 +234,7 @@
       type="button"
       (click)="createRow()"
     >
-      + Create Row
+      + Add UOM
     </button>
 
     <p *ngIf="form1.value.method === 'Single-Test' || disableRowing">&nbsp;</p>

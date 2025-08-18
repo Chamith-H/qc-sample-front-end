@@ -1,6 +1,5 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormControl } from "@angular/forms";
-
 
 @Component({
   selector: "app-input-field",
@@ -18,4 +17,10 @@ export class InputFieldComponent {
   @Input() emptyError = "";
   @Input() validationError = "";
   @Input() control = new FormControl();
+
+  @Output() onChange: EventEmitter<any> = new EventEmitter<any>();
+
+  onChanged() {
+    this.onChange.emit();
+  }
 }
