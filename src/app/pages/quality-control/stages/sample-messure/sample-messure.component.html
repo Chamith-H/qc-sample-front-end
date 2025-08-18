@@ -213,8 +213,14 @@
           <tbody *ngIf="itemList.controls.length === 0">
             <tr>
               <td [colSpan]="3">
-                <div class="py-5 my-5">
-                  <p class="text-center">Please add a new row to continue</p>
+                <div class="py-5 no-uom-c">
+                  <img
+                    src="../../../../../assets/images/nodata/noUom.png"
+                    alt=""
+                  />
+                  <p class="text-center mt-2">
+                    Please add a new row to continue
+                  </p>
                 </div>
               </td>
             </tr>

@@ -457,6 +457,7 @@ export class EditStageComponent {
             headId: this.id,
             stage: this.stage,
             itemCode: this.itemCode,
+            ...this.samplingData,
             ...this.form3.value,
           };
 

@@ -19,3 +19,18 @@
   color: rgb(0, 0, 0);
   font-weight: 500;
 }
+
+.no-uom-c {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-uom-c img {
+  height: 100px;
+}
+
+.no-uom-c p {
+  color: gray;
+}

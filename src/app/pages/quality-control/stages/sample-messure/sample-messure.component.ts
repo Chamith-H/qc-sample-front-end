@@ -161,7 +161,6 @@ export class SampleMessureComponent {
   }
 
   chnageUom(uomId: string, index: number) {
-    this.syncValues();
     const formItems = this.itemList.value;
 
     const count = formItems.filter(
@@ -175,6 +174,8 @@ export class SampleMessureComponent {
         this.toastr.warning("This UOM is already selected in another row!");
       }
     }
+
+    this.syncValues();
   }
 
   disableToField(index: number) {
@@ -216,17 +217,17 @@ export class SampleMessureComponent {
   }
 
   changeTestingMethod() {
-    this.syncValues();
     if (this.form1.value.method === "Single-Test") {
       this.form1.get("samplingMethod").setValue("Fixed");
     }
 
     this.removeAll();
+    this.syncValues();
   }
 
   changeSamplingMethod() {
-    this.syncValues();
     this.removeAll();
+    this.syncValues();
   }
 
   getValues() {
