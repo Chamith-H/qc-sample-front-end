@@ -180,17 +180,32 @@ export class SampleMessureComponent {
 
   disableToField(index: number) {
     const control = this.itemList.at(index);
+    const selectedMin = Number(control.value.min);
 
     if (!control.value.uom) {
       return true;
     } else {
       const formItems = this.itemList.value;
 
-      const count = formItems.filter(
+      const selectedUomArr = formItems.filter(
         (f_item: any) => f_item.uom === control.value.uom
-      ).length;
+      );
 
-      if (count - 1 === index) {
+      const minValMapper = selectedUomArr.map((u_arr: any) => {
+        return Number(u_arr.min);
+      });
+
+      const maximumer = Math.max(...minValMapper);
+
+      const logger = {
+        selectedMin: selectedMin,
+        allMins: minValMapper,
+        maximum: maximumer,
+      };
+
+      console.log(logger);
+
+      if (selectedMin === maximumer) {
         return false;
       } else {
         return true;
