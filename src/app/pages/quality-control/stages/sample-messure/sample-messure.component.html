@@ -9,6 +9,7 @@
       [isSubmit]="isSubmit_form1"
       [mandatory]="true"
       (onChange)="changeTestingMethod()"
+      [isDisabled]="buttonName === ''"
     >
     </app-searchable-dropdown>
   </div>
@@ -23,7 +24,7 @@
       [isSubmit]="isSubmit_form1"
       [mandatory]="true"
       (onChange)="changeSamplingMethod()"
-      [isDisabled]="form1.value.method === 'Single-Test'"
+      [isDisabled]="form1.value.method === 'Single-Test' || buttonName === ''"
     >
     </app-searchable-dropdown>
   </div>
@@ -55,7 +56,7 @@
                   >Sample Ranges</span
                 >
               </th>
-              <th class="item-table-th">Actions</th>
+              <th *ngIf="buttonName !== ''" class="item-table-th">Actions</th>
             </tr>
           </thead>
 
@@ -80,14 +81,17 @@
                       [options]="uoms"
                       [isSubmit]="isSubmit_form2"
                       [mandatory]="true"
-                      [isDisabled]="uom"
+                      [isDisabled]="uom || buttonName === ''"
                       (onChange)="chnageUom($event, j)"
                     >
                     </app-searchable-dropdown>
                   </div>
 
                   <button
-                    *ngIf="form1.value.samplingMethod === 'Range'"
+                    *ngIf="
+                      form1.value.samplingMethod === 'Range' &&
+                      buttonName !== ''
+                    "
                     (click)="createUomRow(item.value.uom)"
                     [disabled]="disableFinder(item.value.uom)"
                     class="btn btn-warning text-white"
@@ -124,7 +128,7 @@
                     emptyError=""
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
-                    [readonly]="disableToField(j)"
+                    [readonly]="disableToField(j) || buttonName === ''"
                     (onChange)="syncValues()"
                   >
                   </app-input-field>
@@ -141,6 +145,7 @@
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                     (onChange)="syncValues()"
+                    [readonly]="buttonName === ''"
                   >
                   </app-input-field>
                   &nbsp; &nbsp; samples
@@ -160,6 +165,7 @@
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                     (onChange)="syncValues()"
+                    [readonly]="buttonName === ''"
                   >
                   </app-input-field>
 
@@ -175,6 +181,7 @@
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                     (onChange)="syncValues()"
+                    [readonly]="buttonName === ''"
                   >
                   </app-input-field>
                   &nbsp; &nbsp; samples
@@ -196,13 +203,14 @@
                     [isSubmit]="isSubmit_form2"
                     [mandatory]="true"
                     (onChange)="syncValues()"
+                    [readonly]="buttonName === ''"
                   >
                   </app-input-field>
                   &nbsp; &nbsp; samples
                 </div>
               </td>
 
-              <td>
+              <td *ngIf="buttonName !== ''">
                 <button class="btn btn-sm button-delete" (click)="deleteRow(j)">
                   <i class="fas fa-trash-alt text-danger"></i>
                 </button>
@@ -230,7 +238,7 @@
     </form>
   </div>
 
-  <div class="d-flex justify-content-between mt-3">
+  <div *ngIf="buttonName !== ''" class="d-flex justify-content-between mt-3">
     <button
       *ngIf="
         form1.value.method !== 'Single-Test' &&

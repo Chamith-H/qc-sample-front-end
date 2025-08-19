@@ -27,17 +27,6 @@ export class ViewStageComponent {
   parameters: any[] = [];
   loadingParameters: boolean = false;
 
-  sampleMethods = [
-    {
-      name: "Single sample test",
-      _id: "Single-Test",
-    },
-    {
-      name: "Multi sample test",
-      _id: "Multi-Test",
-    },
-  ];
-
   booleanDrops = [
     {
       name: "Yes",
@@ -54,8 +43,6 @@ export class ViewStageComponent {
     private qcParameterService: QcParameterService
   ) {
     this.form3 = this.fb.group({
-      method: [null, [Validators.required]],
-      sampleCount: [null, [Validators.required]],
       DocumentLines: this.createitemList(),
     });
   }
@@ -210,7 +197,12 @@ export class ViewStageComponent {
     }
   }
 
+  samplingData: any = null;
+
+  loadingSamplingMethoding: boolean = true;
+
   getParameters() {
+    this.loadingSamplingMethoding = true;
     this.loadingParameters = true;
 
     this.qcParameterService.dropdownParameter().subscribe({
@@ -226,10 +218,13 @@ export class ViewStageComponent {
             next: (res: any) => {
               this.loadingParameters = false;
 
-              this.form3.patchValue({
+              this.samplingData = {
                 method: res.head.method,
-                sampleCount: res.head.sampleCount,
-              });
+                samplingMethod: res.head.samplingMethod,
+                samplingLogics: res.head.samplingLogics,
+              };
+
+              this.loadingSamplingMethoding = false;
 
               const relationMapper = res.relations.map((relation: any) => {
                 this.itemList.push(
